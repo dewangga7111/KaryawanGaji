@@ -1,0 +1,267 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" href="takola.png">
+    <title>SDM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Menyisipkan Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="tool/style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    	<script type="text/javascript" src="media/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="media/js/bootstrap.min.js"></script>
+  <script src="tool/js.js"></script>
+    <script src='jquery-3.3.1.js' type='text/javascript'></script>
+   <script src='jquery-ui.min.js' type='text/javascript'></script>
+   <script type='text/javascript'>
+   $(document).ready(function(){
+     $('.dateFilter').datepicker({
+        dateFormat: "yy-mm-dd"
+     });
+   });
+   </script>
+</head>
+<body style="background:#caf2c4">
+<?php
+   session_start();
+   if(isset($_SESSION['username'])) {
+   header('location:index.php'); }
+   require_once("tool/koneksi.php");
+?>
+<div id="mySidenav" class="sidenav" style="  background: #caf2c4;">
+  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()" >&times;</a>
+    <h4 style="color:blck; margin-left:31px; opacity:0.9">
+        Selamat Datang<br> <?php echo $_SESSION['nama'];?><br/>
+    </h4>
+    <hr width="75%" align="center" color="white" style="opacity:0.7">
+  <a style="color:blck; font-size: 20px; opacity:0.9" href="index_karyawan.php">Karyawan</a>
+  <a style="color:blck; font-size: 20px; opacity:0.9" href="index_kehadiran.php">Absensi</a>
+  <a style="color:blck; font-size: 20px; opacity:0.9" href="index_gaji.php">Gaji</a>
+  <a style="color:blck; font-size: 20px; opacity:0.9" href="index.php">Logout</a>
+    <a style="color:blck; font-size: 20px; opacity:0.9" href="pengaturan.php"><img src="views/images/config.png" height="25" width="25" style="margin-top:260px; margin-left:-10px; opacity:0.7"></a>
+</div>
+<div id="main" class="container-fluid shadow" style="background: #edeeef">
+  <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Menu | Gaji</span>
+</div>
+
+<div class="container-fluid" style="margin-top:100px; width:1350px; background:#edeeef; border-radius:15px;">
+    
+    <div class="row" style="margin-left:1px">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" style="margin-bottom:30px; margin-top:30px">
+    Rekap
+    </button>
+    <a href="tambah_gaji.php"><button class="btn btn-success" style="margin-left:10px; margin-top:30px">Tambah Gaji</button></a>
+    <a href="index_kasbon.php"><button class="btn btn-info" style="margin-left:10px; margin-top:30px">Rekap Kasbon</button></a>
+    </div>
+    
+    <div class="collapse" id="collapseExample">
+    <div class="col-md-4 mb-3">
+        <h5>Cari Bulan</h5>  
+    </div>
+      <form class="form-row"action="fungsi_rekap_gaji.php" class="form-horizontal" method="post" enctype="multipart/form-data" style="margin-left:10px">
+     Bulan
+          <div class="col-md-4 mb-3">
+        <select name="bulan" class="form-control">
+        <option value="01">Januari</option>
+        <option value="02">Februari</option>
+        <option value="03">Maret</option>
+        <option value="04">April</option>
+        <option value="05">Mei</option>
+        <option value="06">Juni</option>
+        <option value="07">Juli</option>
+        <option value="08">Agustus</option>
+        <option value="09">September</option>
+        <option value="10">Oktober</option>
+        <option value="11">November</option>
+        <option value="12">Desember</option>
+        </select>
+          </div>
+          
+        Tahun
+          <div class="col-md-4 mb-3">
+        <select name="tahun" class="form-control">
+        <?php
+        $awal= date('Y') - 50;
+        for($i = $awal;$i<$awal + 100;$i++){
+            $sel = $i == date('Y') ? ' selected="selected"' : '';
+            echo '<option value="'.$i.'"'.$sel.'>'.$i.'</option>';
+        }
+        ?>
+        </select>
+          </div>
+          <button type="submit" class="btn btn-primary" value="Rekap" style="margin-left:10px; height: 38px">Cari</button>
+
+      </form>
+    <hr width="75%" align="left" color="grey" style="opacity:0.2">
+    <div class="col-md-4 mb-3">
+        <h5>Slip Gaji</h5>  
+    </div>
+    <form class="form-row" action="export_index_slip.php" class="form-horizontal" method="post" enctype="multipart/form-data" style="margin-left:10px">
+        Nama
+        <div class="col-md-2.5 mb-3">
+        <select name="nik" class="form-control" style="width:200px">
+            <option>Pilih Nama</option>
+                <?php while ($row = mysqli_fetch_assoc($result)) {?>
+                    <option value="<?php echo $row['nik']?>"><?php echo $row['nama']?></option>
+                <?php }?>
+        </select>
+          </div>
+        Bulan
+        <div class="col-md-2.5 mb-3">
+        <select name="bulan" class="form-control" style="width:200px">
+        <option value="01">Januari</option>
+        <option value="02">Februari</option>
+        <option value="03">Maret</option>
+        <option value="04">April</option>
+        <option value="05">Mei</option>
+        <option value="06">Juni</option>
+        <option value="07">Juli</option>
+        <option value="08">Agustus</option>
+        <option value="09">September</option>
+        <option value="10">Oktober</option>
+        <option value="11">November</option>
+        <option value="12">Desember</option>
+        </select>   
+          </div>
+        Tahun
+          <div class="col-md-2.5 mb-3">
+        <select name="tahun" class="form-control" style="width:200px"> 
+        <?php
+        $awal= date('Y') - 50;
+        for($i = $awal;$i<$awal + 100;$i++){
+            $sel = $i == date('Y') ? ' selected="selected"' : '';
+            echo '<option value="'.$i.'"'.$sel.'>'.$i.'</option>';
+        }
+        ?>
+        </select>
+          </div>
+        <button type="submit" class="btn btn-primary" value="Rekap" style="margin-left:10px; height: 38px">Unduh</button>
+    </form>
+    <hr width="75%" align="left" color="grey" style="opacity:0.2">
+    <div class="col-md-4 mb-3">
+        <h5>Rekap Per Bulan</h5>  
+    </div>
+      <form class="form-row"action="export_index_gaji_bulan.php" class="form-horizontal" method="post" enctype="multipart/form-data" style="margin-left:10px">
+     Bulan
+          <div class="col-md-4 mb-3">
+        <select name="bulan" class="form-control">
+        <option value="01">Januari</option>
+        <option value="02">Februari</option>
+        <option value="03">Maret</option>
+        <option value="04">April</option>
+        <option value="05">Mei</option>
+        <option value="06">Juni</option>
+        <option value="07">Juli</option>
+        <option value="08">Agustus</option>
+        <option value="09">September</option>
+        <option value="10">Oktober</option>
+        <option value="11">November</option>
+        <option value="12">Desember</option>
+        </select>
+          </div>
+          
+        Tahun
+          <div class="col-md-4 mb-3">
+        <select name="tahun" class="form-control">
+        <?php
+        $awal= date('Y') - 50;
+        for($i = $awal;$i<$awal + 100;$i++){
+            $sel = $i == date('Y') ? ' selected="selected"' : '';
+            echo '<option value="'.$i.'"'.$sel.'>'.$i.'</option>';
+        }
+        ?>
+        </select>
+          </div>
+          <button type="submit" class="btn btn-primary" value="Rekap" style="margin-left:10px; height: 38px">Unduh</button>
+      </form>
+    <hr width="75%" align="left" color="grey" style="opacity:0.2">
+    <div class="col-md-4 mb-3">
+        <h5>Rekap Per Tahun</h5>  
+    </div>
+      <form class="form-row"action="export_index_gaji_tahun.php" class="form-horizontal" method="post" enctype="multipart/form-data" style="margin-left:10px">
+         
+        Tahun
+          <div class="col-md-4 mb-3">
+        <select name="tahun" class="form-control">
+        <?php
+        $awal= date('Y') - 50;
+        for($i = $awal;$i<$awal + 100;$i++){
+            $sel = $i == date('Y') ? ' selected="selected"' : '';
+            echo '<option value="'.$i.'"'.$sel.'>'.$i.'</option>';
+        }
+        ?>
+        </select>
+          </div>
+          <button type="submit" class="btn btn-primary" value="Rekap" style="margin-left:10px; height: 38px">Unduh</button>
+
+      </form>
+    </div>
+<table class="table table-striped">
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Nama</th>
+        <th>Nik</th>
+        <th>Gaji</th>
+        <th>BPJS Kes</th>
+        <th>BPJS Ket</th>
+        <th>Pajak</th>
+        <th>Kasbon</th>
+        <th>Piket Malam</th>
+        <th>Lembur</th>
+        <th>Denda</th>
+        <th>THP</th>
+        <th>Bulan</th>
+        <th>Tahun</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+    <?php 
+       $no = $mulai+0;
+	   while ($result = mysqli_fetch_object($query)) {
+        $no++;
+	?>
+        <tr>
+            <td><?php echo $no?></td>
+            <td><?php echo $result->nama?></td>
+            <td><?php echo $result->nik?></td>
+            <td><?php echo $result->gaji_pokok?></td>
+            <td><?php echo $result->bpjs_kes?></td>
+            <td><?php echo $result->bpjs_ket?></td>
+            <td><?php echo $result->pajak?></td>
+            <td><?php echo $result->kasbon?></td>
+            <td><?php echo $result->piket_malam?></td>
+            <td><?php echo $result->lembur?></td>
+            <td><?php echo $result->denda?></td>
+            <td><?php echo $result->thp?></td>
+            <td><?php echo $result->bulan?></td>
+            <td><?php echo $result->tahun?></td>
+            <td>
+                <a href="ubah_gaji.php?nik=<?php echo $result->nik?>&id_gaji=<?php echo $result->id_gaji?>&bulan=<?php echo $result->bulan?>&tahun=<?php echo $result->tahun?>"><button type="button" class="btn btn-warning">Ubah</button></a>
+            </td>
+        </tr>
+    <?php
+       }
+    ?>
+    </tbody>
+</table>
+<ul class="pagination" style="margin-left:18px; margin-bottom:70px">
+  <li class="page-item" style="margin-bottom:30px">
+      <div class="row">
+          <?php for ($i=1; $i<=$pages ; $i++){ ?>
+          <a class="page-link" href="?halaman=<?php echo $i; ?>"><?php echo $i; ?></a>
+          <?php } ?>
+      </div>
+  </li>       
+</ul>
+
+</div>  
+</body>
+</html> 
